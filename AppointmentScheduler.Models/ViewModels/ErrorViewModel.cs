@@ -1,6 +1,6 @@
 using System;
 
-namespace AppointmentScheduler.Models
+namespace AppointmentScheduler.Models.ViewModels
 {
     public class ErrorViewModel
     {
