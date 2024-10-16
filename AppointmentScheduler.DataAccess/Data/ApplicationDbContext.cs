@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using AppointmentScheduler.Models;
+using AppointmentScheduler.Models.ViewModels;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,5 +14,7 @@ namespace AppointmentScheduler.DataAccess.Data
             : base(options)
         {
         }
+        public DbSet<Appointment> Appointments { get; set; }
+
     }
 }
