@@ -1,38 +1,48 @@
-﻿using AppointmentScheduler.Models;
+﻿using AppointmentScheduler.DataAccess.Repository.IRepository;
+using AppointmentScheduler.Models;
 using AppointmentScheduler.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace AppointmentScheduler.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IUnitOfWork unitOfWork)
         {
-            _logger = logger;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
-            return View();
+          
+            var closestAppointments = _unitOfWork.Appointment
+                .GetClosestUpcomingAppointments(a => a.AppointmentTime, 5)
+                .Select(a => new AppointmentVM
+                {
+                    Id = a.Id,
+                    AppointmentTitle = a.AppointmentTitle,
+                    AppointmentTime = a.AppointmentTime,
+                    Description = a.Description
+                })
+                .ToList();
+
+            return View(closestAppointments);
         }
 
-        //public IActionResult Privacy()
-        //{
-        //    return View();
-        //}
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Details(int id)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var appointmentFromDb = _unitOfWork.Appointment.GetFirstOrDefault(a => a.Id == id);
+
+            if (appointmentFromDb == null)
+            {
+                return NotFound();
+            }
+
+            return View(appointmentFromDb);
         }
     }
 }
