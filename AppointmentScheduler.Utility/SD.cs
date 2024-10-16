@@ -8,5 +8,6 @@ namespace AppointmentScheduler.Utility
 {
     public class SD
     {
+        public const string Role_user = "User";
     }
 }
